@@ -1,0 +1,9 @@
+{
+  "name": "kcrawler",
+  "version": "1.0.0",
+  "description": "Crawler that gets height, astrological sign and MBTI type from k-idols.",
+  "main": "app.js",
+  "repository": "https://github.com/yanari/kcrawler",
+  "author": "Marcelle Yanari",
+  "license": "MIT"
+}
