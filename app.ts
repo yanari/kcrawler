@@ -1,23 +1,62 @@
 // const Nightmare = require('nightmare');
 import axios from 'axios';
+import pino from 'pino';
 import { JSDOM } from 'jsdom';
 
 import { Idol, Stat } from './models/idol';
 
+const logger = pino({prettyPrint: {colorize: true}});
 
-const parse = (data: string) => {
-  const { document } = new JSDOM(data).window;
+const parseStats = async (memberPage: string) => {
+  const { document } = new JSDOM(memberPage).window;
+
+  const spans = document.querySelectorAll('span');
+  const idol = new Idol();
+
+  const stat = Array.from(spans).map(el => {
+    idol.setName(el);
+    idol.setHeight(el);
+    idol.setZodiacSign(el);
+    return idol;
+  });
+  return stat;
+};
+
+const parseMember = async (link: string) : Promise<string> => {
+  const response = await axios.get(link);
+  const { document } = new JSDOM(response.data).window;
+
+  const body = document.querySelector('.herald-entry-content');
+
+  return body.innerHTML;
+};
+
+const parseGroupPage = (document: Document) => {
   const body = document.querySelector('.entry-content');
   const anchors = body.querySelectorAll('a');
 
-  const allAnchors = Array.from(anchors).filter(span => {
-    return span.href.match('profile-facts');
-  }) as unknown as Array<string>;
+  const allMembersAnchors = (Array.from(anchors).filter(span => {
+    const isLink = span.href.match('profile-facts');
+    const isMemberPage = span.innerHTML.match('Show more');
+    if (isLink && isMemberPage) return span.href;
+  })).map(el => el.toString());
 
-  return allAnchors;
+  return allMembersAnchors;
+};
+
+const parse = async (data: string) => {
+  const { document } = new JSDOM(data).window;
+  
+  const allMembers = parseGroupPage(document);
+
+  const memberPage = allMembers.map(parseMember);
+
+  const stats = memberPage.map(async el => parseStats(await el));
+
+  // logger.info(await stats);
 };
 
 (async () => {
   const response = await axios.get('https://kprofiles.com/loona-members-profile/');
-  console.dir(parse(response.data));
+  parse(response.data);
 })();

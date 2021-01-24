@@ -5,33 +5,33 @@ export enum Stat {
 }
 
 export class Idol {
-  private _name: string;
-  private _height: string;
-  private _zodiacSign: string;
+  _name: string;
+  _height: string;
+  _zodiacSign: string;
 
   private returnStatFromTag(stat: Stat, tag: HTMLSpanElement) {
-    if (Idol.hasStat(stat, tag)) {
+    if (this.hasStat(stat, tag)) {
       return tag.nextSibling.textContent.trim();
     }
   }
+  
+  static fromSpanElement(spanElement: HTMLSpanElement) : Idol {
+    return spanElement as unknown as Idol;
+  }
 
-  public static hasStat(stat: Stat, tag: HTMLSpanElement) {
+  public hasStat(stat: Stat, tag: HTMLSpanElement) {
     return tag.textContent.match(stat);
   }
 
-  set name(tag: HTMLSpanElement) {
+  setName(tag: HTMLSpanElement) {
     this._name = this.returnStatFromTag(Stat.StageName, tag);
   }
 
-  set zodiacSign(tag: HTMLSpanElement) {
+  setZodiacSign(tag: HTMLSpanElement) {
     this._zodiacSign = this.returnStatFromTag(Stat.ZodiacSign, tag);
   }
 
-  set height(tag: HTMLSpanElement) {
+  setHeight(tag: HTMLSpanElement) {
     this._height = this.returnStatFromTag(Stat.Height, tag);
-  }
-
-  static fromSpanElement(spanElement: HTMLSpanElement) : Idol {
-    return spanElement as unknown as Idol;
   }
 }
