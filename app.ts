@@ -71,6 +71,6 @@ const parse = async (data: string) => {
 };
 
 (async () => {
-  const response = await axios.get('https://kprofiles.com/loona-members-profile/');
+  const response = await axios.get('https://kprofiles.com/cherry-bullet-profile/');
   parse(response.data);
 })();
