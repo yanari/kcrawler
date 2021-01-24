@@ -5,33 +5,65 @@ export enum Stat {
 }
 
 export class Idol {
-  _name: string;
-  _height: string;
-  _zodiacSign: string;
+  #_name: string;
+  #_height: string;
+  #_zodiacSign: string;
 
-  private returnStatFromTag(stat: Stat, tag: HTMLSpanElement) {
-    if (this.hasStat(stat, tag)) {
-      return tag.nextSibling.textContent.trim();
-    }
+  private returnStatFromTag(tag: HTMLSpanElement) : string {
+    return tag.nextSibling.textContent.trim();
   }
   
-  static fromSpanElement(spanElement: HTMLSpanElement) : Idol {
-    return spanElement as unknown as Idol;
+  // static fromSpanElement(spanElement: HTMLSpanElement) : Idol {
+  //   return spanElement as unknown as Idol;
+  // }
+
+  static hasStat(stat: Stat, tag: HTMLSpanElement) : boolean {
+    return !!tag.textContent.match(stat);
   }
 
-  public hasStat(stat: Stat, tag: HTMLSpanElement) {
-    return tag.textContent.match(stat);
+  public static hasName(tag: HTMLSpanElement) : boolean {
+    return this.hasStat(Stat.StageName, tag);
+  }
+
+  public static hasZodiacSign(tag: HTMLSpanElement) : boolean {
+    return this.hasStat(Stat.ZodiacSign, tag);
+  }
+
+  public static hasHeight(tag: HTMLSpanElement) : boolean {
+    return this.hasStat(Stat.Height, tag);
+  }
+
+  get name() {
+    return this.#_name;
+  }
+
+  get height() {
+    return this.#_height;
+  }
+
+  get zodiacSign() {
+    return this.#_zodiacSign;
   }
 
   setName(tag: HTMLSpanElement) {
-    this._name = this.returnStatFromTag(Stat.StageName, tag);
+    if (Idol.hasStat(Stat.StageName, tag)) {
+      this.#_name = this.returnStatFromTag(tag);
+    }
   }
 
   setZodiacSign(tag: HTMLSpanElement) {
-    this._zodiacSign = this.returnStatFromTag(Stat.ZodiacSign, tag);
+    if (Idol.hasStat(Stat.ZodiacSign, tag)) {
+      this.#_zodiacSign = this.returnStatFromTag(tag);
+    }
   }
 
   setHeight(tag: HTMLSpanElement) {
-    this._height = this.returnStatFromTag(Stat.Height, tag);
+    if (Idol.hasStat(Stat.Height, tag)) {
+      this.#_height = this.returnStatFromTag(tag);
+    }
+  }
+
+  toString() {
+    return `${this.#_name}: ${this.#_zodiacSign} ${this.#_height ? `(${this.#_height})` : ''}`;
   }
 }

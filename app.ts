@@ -13,13 +13,14 @@ const parseStats = async (memberPage: string) => {
   const spans = document.querySelectorAll('span');
   const idol = new Idol();
 
-  const stat = Array.from(spans).map(el => {
-    idol.setName(el);
-    idol.setHeight(el);
-    idol.setZodiacSign(el);
+  const formattedIdol = Array.from(spans).reduce((idol, cur) => {
+    if (Idol.hasName(cur)) idol.setName(cur);
+    if (Idol.hasHeight(cur)) idol.setHeight(cur);
+    if (Idol.hasZodiacSign(cur)) idol.setZodiacSign(cur);
     return idol;
-  });
-  return stat;
+  }, idol);
+
+  return formattedIdol;
 };
 
 const parseMember = async (link: string) : Promise<string> => {
@@ -49,9 +50,22 @@ const parse = async (data: string) => {
   
   const allMembers = parseGroupPage(document);
 
-  const memberPage = allMembers.map(parseMember);
+  const idols: Array<Idol> = [];
 
-  const stats = memberPage.map(async el => parseStats(await el));
+  // const memberPage = allMembers.map(parseMember);
+  const stats = allMembers.map(async (member) => {
+    const members = await parseMember(member);
+
+    const mappedStats = await parseStats(members);
+
+    logger.info(mappedStats.toString());
+  });
+
+  // logger.info(stats.toString());
+
+  // const stats = memberPage.map(async (stat) => {
+  //   return await parseStats(await stat)
+  // });
 
   // logger.info(await stats);
 };
