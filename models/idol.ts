@@ -22,10 +22,6 @@ export class Idol {
     this.imageUrl = imageUrl;
   }
 
-  // get height() {
-  //   return this.#height;
-  // }
-
   get zodiac() {
     return this.#zodiac;
   }
@@ -36,7 +32,7 @@ export class Idol {
 
   set height(height: string) {
     const regex = new RegExp(/(.*?)cm/i);
-    this.#height = Number.parseInt(regex.exec(height)[1]);
+    this.#height = height !== '-' ? Number.parseInt(regex.exec(height)[1]) : null;
   }
 
   set zodiac(zodiac: string) {
@@ -47,7 +43,13 @@ export class Idol {
     this.#bloodType = bloodType;
   }
 
-  toString() {
-    return `Idol: ${this.name}, ${this.#height}cm ${this.zodiac}, Blood Type: ${this.bloodType}`;
+  fromJSON() {
+    return {
+      name: this.name,
+      imageUrl: this.imageUrl,
+      zodiac: this.zodiac,
+      bloodType: this.bloodType,
+      height: this.#height,
+    };
   }
 }

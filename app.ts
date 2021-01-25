@@ -7,7 +7,7 @@ import { Idol, Stat, Infos } from './models/idol';
 
 const logger = pino({prettyPrint: {colorize: true}});
 
-const parseStats = (table: string[][], idol: Idol) => {
+const parseStats = (table: string[][]) => {
   const infos : Infos = {
     zodiac: null,
     bloodType: null,
@@ -63,34 +63,41 @@ const parseGroupPage = (document: Document) => {
   return Array.from(members);
 };
 
-const parse = async (data: string) => {
+const parse = (data: string) => {
   const { document } = new JSDOM(data).window;
 
   const group = document.querySelector('h3.name').textContent;
-  
+
   const allMembers = parseGroupPage(document);
-  
+
   logger.info(`Group: ${group}`);
 
-  const stats = allMembers.map((element: Element) => {
-    
+  const idolStats = allMembers.map((element: Element) => {
     const { name, imageUrl, table } = parseMember(element.innerHTML);
-    
+
     const idol = new Idol(name, imageUrl);
 
-    const { bloodType, height, zodiac, } = parseStats(table, idol);
+    const { bloodType, height, zodiac, } = parseStats(table);
 
     idol.height = height;
     idol.bloodType = bloodType;
     idol.zodiac = zodiac;
 
-    logger.info(idol.toString());
-
-    return idol.toString();
+    return idol.fromJSON();
   });
+
+  return idolStats;
 };
 
 (async () => {
-  const response = await axios.get('https://www.makestar.co/artists/1048');
-  parse(response.data);
+  const parsedGroup = encodeURIComponent('gfriend');
+  const res = await axios.get(`https://www.makestar.co/v1/brands/search?keyword=${parsedGroup}&type=Brand&size=8`);
+  const firstMatch = res.data.content[0];
+  const idx = firstMatch !== null ? firstMatch.idx : null;
+  if (idx !== null) {
+    const response = await axios.get(`https://www.makestar.co/artists/${idx}`);
+
+    console.log(parse(response.data));
+  }
+  logger.info('Not found');
 })();
