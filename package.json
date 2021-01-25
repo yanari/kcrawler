@@ -4,7 +4,7 @@
   "description": "Crawler that gets height, astrological sign and MBTI type from k-idols.",
   "main": "app.js",
   "scripts": {
-    "start": "sucrase-node app.ts | pino-pretty"
+    "start": "sucrase-node app.ts $"
   },
   "repository": "https://github.com/yanari/kcrawler",
   "author": "Marcelle Yanari",
@@ -12,7 +12,6 @@
   "dependencies": {
     "axios": "^0.21.1",
     "jsdom": "^16.4.0",
-    "nightmare": "^3.0.2",
     "pino": "^6.11.0"
   },
   "devDependencies": {

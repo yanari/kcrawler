@@ -1,69 +1,55 @@
 export enum Stat {
-  StageName = 'Stage Name',
-  ZodiacSign = 'Zodiac Sign',
+  BloodType = 'Blood Type',
+  Zodiac = 'Zodiac',
   Height = 'Height',
 }
 
+export interface Infos {
+  zodiac: string,
+  bloodType: string,
+  height: string,
+}
+
 export class Idol {
-  #_name: string;
-  #_height: string;
-  #_zodiacSign: string;
+  name: string;
+  imageUrl: string;
+  #zodiac: string;
+  #height: number;
+  #bloodType: string;
 
-  private returnStatFromTag(tag: HTMLSpanElement) : string {
-    return tag.nextSibling.textContent.trim();
-  }
-  
-  // static fromSpanElement(spanElement: HTMLSpanElement) : Idol {
-  //   return spanElement as unknown as Idol;
-  // }
-
-  static hasStat(stat: Stat, tag: HTMLSpanElement) : boolean {
-    return !!tag.textContent.match(stat);
+  constructor(name: string, imageUrl: string) {
+    this.name = name;
+    this.imageUrl = imageUrl;
   }
 
-  public static hasName(tag: HTMLSpanElement) : boolean {
-    return this.hasStat(Stat.StageName, tag);
+  get zodiac() {
+    return this.#zodiac;
   }
 
-  public static hasZodiacSign(tag: HTMLSpanElement) : boolean {
-    return this.hasStat(Stat.ZodiacSign, tag);
+  get bloodType() {
+    return this.#bloodType;
   }
 
-  public static hasHeight(tag: HTMLSpanElement) : boolean {
-    return this.hasStat(Stat.Height, tag);
+  set height(height: string) {
+    const regex = new RegExp(/(.*?)cm/i);
+    this.#height = height !== '-' ? Number.parseInt(regex.exec(height)[1]) : null;
   }
 
-  get name() {
-    return this.#_name;
+  set zodiac(zodiac: string) {
+    this.#zodiac = zodiac;
   }
 
-  get height() {
-    return this.#_height;
+  set bloodType(bloodType: string) {
+    this.#bloodType = bloodType;
   }
 
-  get zodiacSign() {
-    return this.#_zodiacSign;
-  }
-
-  setName(tag: HTMLSpanElement) {
-    if (Idol.hasStat(Stat.StageName, tag)) {
-      this.#_name = this.returnStatFromTag(tag);
-    }
-  }
-
-  setZodiacSign(tag: HTMLSpanElement) {
-    if (Idol.hasStat(Stat.ZodiacSign, tag)) {
-      this.#_zodiacSign = this.returnStatFromTag(tag);
-    }
-  }
-
-  setHeight(tag: HTMLSpanElement) {
-    if (Idol.hasStat(Stat.Height, tag)) {
-      this.#_height = this.returnStatFromTag(tag);
-    }
-  }
-
-  toString() {
-    return `${this.#_name}: ${this.#_zodiacSign} ${this.#_height ? `(${this.#_height})` : ''}`;
+  fromJSON() {
+    return {
+      name: this.name,
+      imageUrl: this.imageUrl,
+      zodiac: this.zodiac,
+      bloodType: this.bloodType,
+      height: this.#height,
+    };
   }
 }
