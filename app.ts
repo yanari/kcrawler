@@ -65,8 +65,12 @@ const parseGroupPage = (document: Document) => {
 
 const parse = async (data: string) => {
   const { document } = new JSDOM(data).window;
+
+  const group = document.querySelector('h3.name').textContent;
   
   const allMembers = parseGroupPage(document);
+  
+  logger.info(`Group: ${group}`);
 
   const stats = allMembers.map((element: Element) => {
     
@@ -80,13 +84,13 @@ const parse = async (data: string) => {
     idol.bloodType = bloodType;
     idol.zodiac = zodiac;
 
+    logger.info(idol.toString());
+
     return idol.toString();
   });
-
-  logger.info(stats);
 };
 
 (async () => {
-  const response = await axios.get('https://www.makestar.co/artists/924');
+  const response = await axios.get('https://www.makestar.co/artists/1048');
   parse(response.data);
 })();
