@@ -15,7 +15,7 @@ export class Idol {
   imageUrl: string;
   #zodiac: string;
   #height: number;
-  #bloodType: string;
+  private _bloodType: string;
 
   constructor(name: string, imageUrl: string) {
     this.name = name;
@@ -27,7 +27,7 @@ export class Idol {
   }
 
   get bloodType() {
-    return this.#bloodType;
+    return this._bloodType;
   }
 
   set height(height: string) {
@@ -40,7 +40,7 @@ export class Idol {
   }
 
   set bloodType(bloodType: string) {
-    this.#bloodType = bloodType;
+    this._bloodType = bloodType;
   }
 
   fromJSON() {
