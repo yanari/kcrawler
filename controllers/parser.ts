@@ -8,13 +8,20 @@ const parseStats = (table: string[][]) => {
     zodiac: null,
     bloodType: null,
     height: null,
+    birthday: null,
   };
 
-  const { bloodType, height, zodiac } = table.map((tableRow) => {
+  const {
+    bloodType,
+    height,
+    zodiac,
+    birthday,
+  } = table.map((tableRow) => {
     return tableRow.reduce((acc, cur, i, arr) => {
       if (cur.match(Stat.Zodiac)) infos.zodiac = arr[i + 1];
       if (cur.match(Stat.Height)) infos.height = arr[i + 1];
       if (cur.match(Stat.BloodType)) infos.bloodType = arr[i + 1];
+      if (cur.match(Stat.Birthday)) infos.birthday = arr[i + 1];
       return acc;
     }, infos);
   })[0];
@@ -23,6 +30,7 @@ const parseStats = (table: string[][]) => {
     bloodType,
     height,
     zodiac,
+    birthday,
   };
 };
 
@@ -73,11 +81,17 @@ const parse = (data: string) => {
 
     const idol = new Idol(name, imageFileUrl);
 
-    const { bloodType, height, zodiac, } = parseStats(table);
+    const {
+      bloodType,
+      height,
+      zodiac,
+      birthday,
+    } = parseStats(table);
 
     idol.height = height;
     idol.bloodType = bloodType;
     idol.zodiac = zodiac;
+    idol.birthday = birthday;
 
     return idol.fromJSON();
   });
